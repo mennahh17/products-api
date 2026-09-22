@@ -87,3 +87,37 @@ model Verification {
   @@index([identifier])
   @@map("verification")
 }
+
+model Order {
+  id          Int         @id @default(autoincrement())
+  userId      String
+  status      String      @default("pending")
+  totalPrice  Float
+  items       OrderItem[]
+  deliveryAddress  String? 
+  phone       String?
+  email       String?
+  country     String?
+  firstName   String?
+  lastName    String?
+  city        String?
+  governorate String?
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime    @updatedAt
+}
+
+
+model OrderItem {
+id                  Int              @id @default(autoincrement())
+orderId             Int              
+order               Order            @relation(fields : [orderId] , references:[id] , onDelete:Cascade)
+productId           Int
+productName         String
+price               Float
+quantity            Int
+}
+
+
+
+
+

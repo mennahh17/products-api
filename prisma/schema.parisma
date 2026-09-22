@@ -17,3 +17,7 @@ accounts               Account[]
 @@map("user)
 
 }
+
+{
+
+}

@@ -6,6 +6,7 @@ import { ProductsModule } from './products/products.module.js';
 import { PrismaModule } from './prisma/prisma.module.js';
 import { AuthModule } from '@thallesp/nestjs-better-auth';
 import { auth } from './auth.js';
+import { OrdersModule } from './orders/orders.module.js';
 
 export const { ObserveModule, ObserveInstrument } = createObserveModule();
 
@@ -19,6 +20,7 @@ export const { ObserveModule, ObserveInstrument } = createObserveModule();
     ProductsModule,
     PrismaModule,
     AuthModule.forRoot(auth),
+    OrdersModule,
   ],
   controllers: [AppController],
   providers: [AppService],
