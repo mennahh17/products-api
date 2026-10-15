@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Patch, Param } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, ParseIntPipe } from '@nestjs/common';
 import { OrdersService } from './orders.service.js';
 import { CreateOrderDto } from './dto/create-order.dto.js';
 import { UpdateOrderDto } from './dto/update-order.dto.js';
@@ -10,19 +10,8 @@ export class OrdersController {
   constructor(private readonly ordersService: OrdersService) {}
 
   @Get('my-orders')
-findMyOrders(@Session() session: UserSession) {
+  findMyOrders(@Session() session: UserSession) {
     return this.ordersService.findMyOrders(session.user.id);
-}
-
-  @Patch(':id/status') 
-  updateStatus(@Param('id') id: string , @Body() body:{status:string} , @Session() session:UserSession) {
-    return this.ordersService.updateStatus(+id , body.status , session.user.email)
-
-  }
-
-  @Post()
-  create(@Body() createOrderDto: CreateOrderDto, @Session() session: UserSession) {
-    return this.ordersService.create(createOrderDto, session.user.id);
   }
 
   @Get('all')
@@ -30,21 +19,36 @@ findMyOrders(@Session() session: UserSession) {
     return this.ordersService.findAll(session.user.email);
   }
 
+  @Post()
+  create(@Body() createOrderDto: CreateOrderDto, @Session() session: UserSession) {
+    return this.ordersService.create(createOrderDto, session.user.id);
+  }
+
   @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.ordersService.findOne(+id);
+  findOne(@Param('id', ParseIntPipe) id: number, @Session() session: UserSession) {
+    return this.ordersService.findOne(id, session.user.id, session.user.email);
+  }
+
+  @Patch(':id/status')
+  updateStatus(
+    @Param('id', ParseIntPipe) id: number,
+    @Body() body: { status: string },
+    @Session() session: UserSession,
+  ) {
+    return this.ordersService.updateStatus(id, body.status, session.user.email);
   }
 
   @Patch(':id/cancel')
-  cancelOrder(@Param('id') id: string) {
-    return this.ordersService.cancelOrder(+id);
+  cancelOrder(@Param('id', ParseIntPipe) id: number, @Session() session: UserSession) {
+    return this.ordersService.cancelOrder(id, session.user.id, session.user.email);
   }
 
   @Patch(':id')
-  update(@Param('id') id: string, @Body() updateOrderDto: UpdateOrderDto) {
-    return this.ordersService.update(+id, updateOrderDto);
+  update(
+    @Param('id', ParseIntPipe) id: number,
+    @Body() updateOrderDto: UpdateOrderDto,
+    @Session() session: UserSession,
+  ) {
+    return this.ordersService.update(id, updateOrderDto, session.user.email);
   }
-
-  
-
 }
